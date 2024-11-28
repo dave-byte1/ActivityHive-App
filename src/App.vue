@@ -1,5 +1,33 @@
 <script setup>
 
+import {computed, reactive} from "vue";
+
+// Reactive object to store app data
+const data = reactive({
+  sitename: "ActivityHive",
+  product: { // Product information
+    id: 1001,
+    subject: "Extra Math Lesson",
+    location: "London, MH10 WN",
+    price: 10,
+    spaces: 8,
+  },
+  cart: [], // Array to store items in shopping cart
+  isCheckoutVisible: false
+});
+
+function addItem() {
+  data.cart.push(data.product.id);
+}
+
+const cartItemCount = computed(() => {
+  return data.cart.length || "";
+});
+
+const canAddToCart = computed(() => {
+  return data.product.spaces > data.cart.length;
+});
+
 </script>
 
 <template>
