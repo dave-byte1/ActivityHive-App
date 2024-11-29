@@ -34,11 +34,20 @@ const data = reactive({
   cart: [],
   isCheckoutVisible: false,
   currentFilter: "all",
+  isCartVisible: false,
 });
 
 // Add item to the cart
 function addItem(product) {
   data.cart.push(product.id);
+}
+
+// Remove an item from the cart
+function removeItem(productId) {
+  const index = data.cart.indexOf(productId);
+  if (index !== -1) {
+    data.cart.splice(index, 1);
+  }
 }
 
 // Computed property for the number of items in the cart
@@ -65,25 +74,42 @@ const filteredProducts = computed(() => {
   return data.products.filter((product) => product.filter === data.currentFilter);
 });
 
-// Function to set the current filter
-function setFilter(filter) {
-  data.currentFilter = filter;
+// Computed property to show cart items
+const cartItems = computed(() => {
+  return data.products.filter((product) => data.cart.includes(product.id));
+})
+
+// Toggle visibility of the cart
+function toggleCart() {
+  data.isCartVisible = !data.isCartVisible;
 }
+
+function toggleShop() {
+  if (data.isCartVisible) {
+    data.isCartVisible = false; // Hide the cart and show the shop
+  }
+}
+
 </script>
 
 <template>
   <div class="bg-[#F5F5F5] min-h-screen">
+
     <!-- Header -->
     <header class="bg-[#4d4d4d] text-white px-4 py-3 flex items-center justify-between">
       <div class="text-xl font-bold">
         {{ data.sitename }}
       </div>
       <div class="flex justify-center w-full space-x-4">
-        <button class="bg-white text-[#4d4d4d] px-4 py-2 rounded shadow hover:bg-gray-100 transition">
+        <button
+            @click="toggleShop"
+            class="bg-white text-[#4d4d4d] px-4 py-2 rounded shadow hover:bg-gray-100 transition"
+        >
           Shop
         </button>
         <button
             :disabled="disableCart"
+            @click="toggleCart"
             class="bg-white text-[#4d4d4d] px-4 py-2 rounded shadow hover:bg-gray-100 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
         >
           Cart ({{ cartItemCount }})
@@ -92,13 +118,13 @@ function setFilter(filter) {
     </header>
 
     <!-- Product List -->
-    <div class="container mx-auto py-10">
+    <div v-if="!data.isCartVisible" class="container mx-auto py-10">
       <h2 class="text-center text-2xl font-bold mb-6">Available Classes</h2>
 
       <!-- Filter Buttons -->
       <div class="flex justify-center space-x-4 mb-6">
         <button
-            @click="setFilter('all')"
+            @click="data.currentFilter = 'all'"
             :class="{
             'bg-[#4d4d4d] text-white': data.currentFilter === 'all',
             'bg-white text-[#4d4d4d]': data.currentFilter !== 'all'
@@ -108,7 +134,7 @@ function setFilter(filter) {
           All
         </button>
         <button
-            @click="setFilter('math')"
+            @click="data.currentFilter = 'math'"
             :class="{
             'bg-[#4d4d4d] text-white': data.currentFilter === 'math',
             'bg-white text-[#4d4d4d]': data.currentFilter !== 'math'
@@ -118,7 +144,7 @@ function setFilter(filter) {
           Math
         </button>
         <button
-            @click="setFilter('science')"
+            @click="data.currentFilter = 'science'"
             :class="{
             'bg-[#4d4d4d] text-white': data.currentFilter === 'science',
             'bg-white text-[#4d4d4d]': data.currentFilter !== 'science'
@@ -128,7 +154,7 @@ function setFilter(filter) {
           Science
         </button>
         <button
-            @click="setFilter('art')"
+            @click="data.currentFilter = 'art'"
             :class="{
             'bg-[#4d4d4d] text-white': data.currentFilter === 'art',
             'bg-white text-[#4d4d4d]': data.currentFilter !== 'art'
@@ -160,7 +186,36 @@ function setFilter(filter) {
         </div>
       </div>
     </div>
+
+    <!-- Cart List -->
+    <div v-else class="container mx-auto py-10">
+      <h2 class="text-center text-2xl font-bold mb-6">Your Cart</h2>
+
+      <div v-if="cartItems.length > 0">
+        <div
+            v-for="item in cartItems"
+            :key="item.id"
+            class="bg-white p-6 rounded shadow-md mb-4 flex justify-between items-center"
+        >
+          <div>
+            <h3 class="text-lg font-bold mb-2">{{ item.subject }}</h3>
+            <p class="mb-2">Location: {{ item.location }}</p>
+            <p>Price: £{{ item.price }}</p>
+          </div>
+          <button
+              @click="removeItem(item.id)"
+              class="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600 transition"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+      <div v-else class="text-center text-gray-500">
+        Your cart is empty.
+      </div>
+    </div>
   </div>
+
 </template>
 
 <style>
