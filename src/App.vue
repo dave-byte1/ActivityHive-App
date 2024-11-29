@@ -12,6 +12,7 @@ const data = reactive({
       location: "London, MH10 WN",
       price: 10,
       spaces: 8,
+      filter: "math",
     },
     {
       id: 1002,
@@ -19,6 +20,7 @@ const data = reactive({
       location: "Birmingham, B88 NJG",
       price: 15,
       spaces: 5,
+      filter: "science",
     },
     {
       id: 1003,
@@ -26,10 +28,12 @@ const data = reactive({
       location: "Manchester, MO9 PR1",
       price: 12,
       spaces: 10,
+      filter: "art",
     },
   ],
-  cart: [], // Array to store items in shopping cart
+  cart: [],
   isCheckoutVisible: false,
+  currentFilter: "all",
 });
 
 // Add item to the cart
@@ -48,14 +52,26 @@ function canAddToCart(product) {
   return product.spaces > productInCart;
 }
 
+// Computed property to disable the cart button if cart is empty
 const disableCart = computed(() => {
-  return data.cart.length === 0; // Disable the Cart button if the cart is empty
+  return data.cart.length === 0;
 });
 
+// Computed property for filtered products
+const filteredProducts = computed(() => {
+  if (data.currentFilter === "all") {
+    return data.products;
+  }
+  return data.products.filter((product) => product.filter === data.currentFilter);
+});
+
+// Function to set the current filter
+function setFilter(filter) {
+  data.currentFilter = filter;
+}
 </script>
 
 <template>
-
   <div class="bg-[#F5F5F5] min-h-screen">
     <!-- Header -->
     <header class="bg-[#4d4d4d] text-white px-4 py-3 flex items-center justify-between">
@@ -78,15 +94,61 @@ const disableCart = computed(() => {
     <!-- Product List -->
     <div class="container mx-auto py-10">
       <h2 class="text-center text-2xl font-bold mb-6">Available Classes</h2>
+
+      <!-- Filter Buttons -->
+      <div class="flex justify-center space-x-4 mb-6">
+        <button
+            @click="setFilter('all')"
+            :class="{
+            'bg-[#4d4d4d] text-white': data.currentFilter === 'all',
+            'bg-white text-[#4d4d4d]': data.currentFilter !== 'all'
+          }"
+            class="px-4 py-2 rounded shadow hover:bg-gray-100 transition"
+        >
+          All
+        </button>
+        <button
+            @click="setFilter('math')"
+            :class="{
+            'bg-[#4d4d4d] text-white': data.currentFilter === 'math',
+            'bg-white text-[#4d4d4d]': data.currentFilter !== 'math'
+          }"
+            class="px-4 py-2 rounded shadow hover:bg-gray-100 transition"
+        >
+          Math
+        </button>
+        <button
+            @click="setFilter('science')"
+            :class="{
+            'bg-[#4d4d4d] text-white': data.currentFilter === 'science',
+            'bg-white text-[#4d4d4d]': data.currentFilter !== 'science'
+          }"
+            class="px-4 py-2 rounded shadow hover:bg-gray-100 transition"
+        >
+          Science
+        </button>
+        <button
+            @click="setFilter('art')"
+            :class="{
+            'bg-[#4d4d4d] text-white': data.currentFilter === 'art',
+            'bg-white text-[#4d4d4d]': data.currentFilter !== 'art'
+          }"
+            class="px-4 py-2 rounded shadow hover:bg-gray-100 transition"
+        >
+          Art
+        </button>
+      </div>
+
+      <!-- Product Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div
-            v-for="product in data.products"
+            v-for="product in filteredProducts"
             :key="product.id"
             class="bg-white p-6 rounded shadow-md"
         >
           <h3 class="text-lg font-bold mb-2">{{ product.subject }}</h3>
           <p class="mb-2">Location: {{ product.location }}</p>
-          <p class="mb-2">Price: ${{ product.price }}</p>
+          <p class="mb-2">Price: £{{ product.price }}</p>
           <p class="mb-4">Spaces available: {{ product.spaces }}</p>
           <button
               :disabled="!canAddToCart(product)"
@@ -99,7 +161,6 @@ const disableCart = computed(() => {
       </div>
     </div>
   </div>
-
 </template>
 
 <style>
