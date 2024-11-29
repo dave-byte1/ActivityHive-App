@@ -90,6 +90,24 @@ function toggleShop() {
   }
 }
 
+// Group cart items by product and calculate their quantities
+const groupedCartItems = computed(() => {
+  const grouped = {};
+  data.cart.forEach((id) => {
+    if (!grouped[id]) {
+      grouped[id] = {...data.products.find((product) => product.id === id), quantity: 0};
+    }
+    grouped[id].quantity++;
+  });
+  return Object.values(grouped);
+});
+
+// Compute the total price of the cart
+const totalCartPrice = computed(() => {
+  return groupedCartItems.value.reduce((total, item) => total + item.price * item.quantity, 0);
+});
+
+
 </script>
 
 <template>
@@ -191,9 +209,10 @@ function toggleShop() {
     <div v-else class="container mx-auto py-10">
       <h2 class="text-center text-2xl font-bold mb-6">Your Cart</h2>
 
-      <div v-if="cartItems.length > 0">
+      <!-- Display grouped cart items -->
+      <div v-if="groupedCartItems.length > 0">
         <div
-            v-for="item in cartItems"
+            v-for="item in groupedCartItems"
             :key="item.id"
             class="bg-white p-6 rounded shadow-md mb-4 flex justify-between items-center"
         >
@@ -201,6 +220,7 @@ function toggleShop() {
             <h3 class="text-lg font-bold mb-2">{{ item.subject }}</h3>
             <p class="mb-2">Location: {{ item.location }}</p>
             <p>Price: £{{ item.price }}</p>
+            <p>Quantity: {{ item.quantity }}</p>
           </div>
           <button
               @click="removeItem(item.id)"
@@ -208,6 +228,10 @@ function toggleShop() {
           >
             Remove
           </button>
+        </div>
+        <!-- Total Price -->
+        <div class="text-right font-bold text-xl mt-6">
+          Total: £{{ totalCartPrice }}
         </div>
       </div>
       <div v-else class="text-center text-gray-500">
