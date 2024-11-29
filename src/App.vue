@@ -47,6 +47,11 @@ function canAddToCart(product) {
   const productInCart = data.cart.filter((id) => id === product.id).length;
   return product.spaces > productInCart;
 }
+
+const disableCart = computed(() => {
+  return data.cart.length === 0; // Disable the Cart button if the cart is empty
+});
+
 </script>
 
 <template>
@@ -61,7 +66,10 @@ function canAddToCart(product) {
         <button class="bg-white text-[#4d4d4d] px-4 py-2 rounded shadow hover:bg-gray-100 transition">
           Shop
         </button>
-        <button class="bg-white text-[#4d4d4d] px-4 py-2 rounded shadow hover:bg-gray-100 transition">
+        <button
+            :disabled="disableCart"
+            class="bg-white text-[#4d4d4d] px-4 py-2 rounded shadow hover:bg-gray-100 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+        >
           Cart ({{ cartItemCount }})
         </button>
       </div>
