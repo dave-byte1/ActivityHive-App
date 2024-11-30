@@ -35,7 +35,19 @@ const data = reactive({
   isCheckoutVisible: false,
   currentFilter: "all",
   isCartVisible: false,
+  customerName: "",
+  customerPhone: "",
 });
+
+// Function to open checkout
+function goToCheckout() {
+  data.isCheckoutVisible = true;
+}
+
+// Function to close checkout
+function goToCart() {
+  data.isCheckoutVisible = false;
+}
 
 // Add item to the cart
 function addItem(product) {
@@ -224,14 +236,99 @@ const totalCartPrice = computed(() => {
           </div>
           <button
               @click="removeItem(item.id)"
-              class="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600 transition"
+              class="flex items-center gap-2 px-3 py-2 rounded bg-red-500 text-white hover:bg-red-600 transition"
           >
             Remove
+            <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                 width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+              <path fill-rule="evenodd"
+                    d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z"
+                    clip-rule="evenodd"/>
+            </svg>
           </button>
         </div>
+
         <!-- Total Price -->
         <div class="text-right font-bold text-xl mt-6">
           Total: £{{ totalCartPrice }}
+        </div>
+
+        <div class="text-right font-bold text-xl mt-6">
+          <!-- Checkout Button -->
+          <button
+              v-if="!data.isCheckoutVisible"
+              @click="goToCheckout"
+              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2"
+          >
+            Checkout
+            <svg class="w-3.5 h-3.5 align-middle ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                 viewBox="0 0 14 10">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M1 5h12m0 0L9 1m4 4L9 9"/>
+            </svg>
+          </button>
+
+          <!-- Back to Cart Button -->
+          <button
+              v-if="data.isCheckoutVisible"
+              @click="goToCart"
+              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2"
+          >
+            <svg class="w-3.5 h-3.5 transform rotate-180 align-middle" aria-hidden="true"
+                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M1 5h12m0 0L9 1m4 4L9 9"/>
+            </svg>
+            Back to Cart
+          </button>
+        </div>
+
+
+        <div v-if="data.isCheckoutVisible" class="container mx-auto py-10">
+          <h2 class="text-center text-2xl font-bold mb-6">Checkout</h2>
+
+          <form class="max-w-lg mx-auto bg-white p-6 rounded shadow-md">
+            <div class="mb-4">
+              <label for="name" class="block text-sm font-bold mb-2">Name</label>
+              <input
+                  id="name"
+                  v-model="data.customerName"
+                  type="text"
+                  pattern="[A-Za-z ]+"
+                  placeholder="Enter your name"
+                  class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
+                  required
+              />
+            </div>
+
+            <div class="mb-4">
+              <label for="phone" class="block text-sm font-bold mb-2">Phone Number</label>
+              <input
+                  id="phone"
+                  v-model="data.customerPhone"
+                  type="text"
+                  pattern="[0-9]+"
+                  placeholder="Enter your phone number"
+                  class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
+                  required
+              />
+            </div>
+
+            <div class="text-right font-bold text-xl mt-6">
+              Total: £{{ totalCartPrice }}
+            </div>
+
+            <div class="text-right text-gray-500 italic">
+              Payment will be done in person
+            </div>
+
+            <button
+                type="submit"
+                class="w-full text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-6"
+            >
+              Place Order
+            </button>
+          </form>
         </div>
       </div>
       <div v-else class="text-center text-gray-500">
