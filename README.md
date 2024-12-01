@@ -1,29 +1,14 @@
 # ActivityHive
 
-This template should help get you started developing with Vue 3 in Vite.
+A web application for booking after-school classes and activities, built with **Vue.js**, **Express.js**, and **MongoDB Atlas**.
 
-## Recommended IDE Setup
+### Frontend:
+- Vue.js (latest version)
+- Tailwind CSS
+- Font Awesome icons
+- https://dave-byte1.github.io/ActivityHive-App/
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+### Backend:
+- Node.js with Express.js
+- MongoDB Atlas
+- Render.com for deployment
