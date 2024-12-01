@@ -16,7 +16,7 @@ const data = reactive({
 
 // Fetch products from the back-end
 function fetchProducts() {
-  fetch('http://localhost:3000/api/products')
+  fetch('https://activityhive-server.onrender.com/api/products')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch products');
@@ -50,7 +50,7 @@ function saveOrder() {
   };
 
   // Send the order data to the back-end
-  fetch('http://localhost:3000/api/orders', {
+  fetch('https://activityhive-server.onrender.com/api/orders', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
