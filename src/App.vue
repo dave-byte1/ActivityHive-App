@@ -5,32 +5,7 @@ import {computed, reactive} from "vue";
 // Reactive object to store app data
 const data = reactive({
   sitename: "ActivityHive",
-  products: [
-    {
-      id: 1001,
-      subject: "Extra Math Lesson",
-      location: "London, MH10 WN",
-      price: 10,
-      spaces: 8,
-      filter: "math",
-    },
-    {
-      id: 1002,
-      subject: "Science Workshop",
-      location: "Birmingham, B88 NJG",
-      price: 15,
-      spaces: 5,
-      filter: "science",
-    },
-    {
-      id: 1003,
-      subject: "Art Class",
-      location: "Manchester, MO9 PR1",
-      price: 12,
-      spaces: 10,
-      filter: "art",
-    },
-  ],
+  products: [],
   cart: [],
   isCheckoutVisible: false,
   currentFilter: "all",
@@ -38,6 +13,27 @@ const data = reactive({
   customerName: "",
   customerPhone: "",
 });
+
+// Fetch products from the back-end
+function fetchProducts() {
+  fetch('http://localhost:3000/api/products')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        return response.json();
+      })
+      .then((products) => {
+        data.products = products;
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+}
+
+// Fetch products when the component is mounted
+fetchProducts();
+
 
 // Function to open checkout
 function goToCheckout() {
@@ -192,6 +188,86 @@ const totalCartPrice = computed(() => {
             class="px-4 py-2 rounded shadow hover:bg-gray-100 transition"
         >
           Art
+        </button>
+        <button
+            @click="data.currentFilter = 'writing'"
+            :class="{
+            'bg-[#4d4d4d] text-white': data.currentFilter === 'writing',
+            'bg-white text-[#4d4d4d]': data.currentFilter !== 'writing'
+          }"
+            class="px-4 py-2 rounded shadow hover:bg-gray-100 transition"
+        >
+          Writing
+        </button>
+        <button
+            @click="data.currentFilter = 'photography'"
+            :class="{
+            'bg-[#4d4d4d] text-white': data.currentFilter === 'photography',
+            'bg-white text-[#4d4d4d]': data.currentFilter !== 'photography'
+          }"
+            class="px-4 py-2 rounded shadow hover:bg-gray-100 transition"
+        >
+          Photography
+        </button>
+        <button
+            @click="data.currentFilter = 'dance'"
+            :class="{
+            'bg-[#4d4d4d] text-white': data.currentFilter === 'dance',
+            'bg-white text-[#4d4d4d]': data.currentFilter !== 'dance'
+          }"
+            class="px-4 py-2 rounded shadow hover:bg-gray-100 transition"
+        >
+          Dance
+        </button>
+        <button
+            @click="data.currentFilter = 'chess'"
+            :class="{
+            'bg-[#4d4d4d] text-white': data.currentFilter === 'chess',
+            'bg-white text-[#4d4d4d]': data.currentFilter !== 'chess'
+          }"
+            class="px-4 py-2 rounded shadow hover:bg-gray-100 transition"
+        >
+          Chess
+        </button>
+        <button
+            @click="data.currentFilter = 'drama'"
+            :class="{
+            'bg-[#4d4d4d] text-white': data.currentFilter === 'drama',
+            'bg-white text-[#4d4d4d]': data.currentFilter !== 'drama'
+          }"
+            class="px-4 py-2 rounded shadow hover:bg-gray-100 transition"
+        >
+          Drama
+        </button>
+        <button
+            @click="data.currentFilter = 'history'"
+            :class="{
+            'bg-[#4d4d4d] text-white': data.currentFilter === 'history',
+            'bg-white text-[#4d4d4d]': data.currentFilter !== 'history'
+          }"
+            class="px-4 py-2 rounded shadow hover:bg-gray-100 transition"
+        >
+          History
+        </button>
+        <button
+            @click="data.currentFilter = 'coding'"
+            :class="{
+            'bg-[#4d4d4d] text-white': data.currentFilter === 'coding',
+            'bg-white text-[#4d4d4d]': data.currentFilter !== 'coding'
+          }"
+            class="px-4 py-2 rounded shadow hover:bg-gray-100 transition"
+        >
+          Coding
+        </button>
+        <button
+            @click="data.currentFilter = 'fitness'"
+            :class="{
+            'bg-[#4d4d4d] text-white': data.currentFilter === 'fitness',
+            'bg-white text-[#4d4d4d]': data.currentFilter !== 'fitness'
+          }"
+            class="px-4 py-2 rounded shadow hover:bg-gray-100 transition"
+        >
+          Fitness
         </button>
       </div>
 
