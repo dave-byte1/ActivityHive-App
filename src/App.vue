@@ -34,6 +34,49 @@ function fetchProducts() {
 // Fetch products when the component is mounted
 fetchProducts();
 
+// Function to save a new order
+function saveOrder() {
+  // Prepare the order data
+  const order = {
+    customerName: data.customerName,
+    customerPhone: data.customerPhone,
+    items: groupedCartItems.value.map((item) => ({
+      id: item.id,
+      subject: item.subject,
+      quantity: item.quantity,
+      price: item.price
+    })),
+    totalPrice: totalCartPrice.value,
+  };
+
+  // Send the order data to the back-end
+  fetch('http://localhost:3000/api/orders', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(order),
+  })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to save the order');
+        }
+        return response.json();
+      })
+      .then((result) => {
+        console.log('Order saved successfully:', result);
+        alert('Order placed successfully!');
+        // Reset the cart and form
+        data.cart = [];
+        data.customerName = '';
+        data.customerPhone = '';
+        data.isCheckoutVisible = false;
+      })
+      .catch((error) => {
+        console.error('Error saving the order:', error);
+        alert('Failed to place the order. Please try again.');
+      });
+}
 
 // Function to open checkout
 function goToCheckout() {
@@ -114,7 +157,6 @@ const groupedCartItems = computed(() => {
 const totalCartPrice = computed(() => {
   return groupedCartItems.value.reduce((total, item) => total + item.price * item.quantity, 0);
 });
-
 
 </script>
 
@@ -278,6 +320,10 @@ const totalCartPrice = computed(() => {
             :key="product.id"
             class="bg-white p-6 rounded shadow-md"
         >
+          <font-awesome-icon
+              :icon="['fas', product.icon]"
+              class="text-xl text-[#4d4d4d] mb-2"
+          />
           <h3 class="text-lg font-bold mb-2">{{ product.subject }}</h3>
           <p class="mb-2">Location: {{ product.location }}</p>
           <p class="mb-2">Price: £{{ product.price }}</p>
@@ -363,7 +409,10 @@ const totalCartPrice = computed(() => {
         <div v-if="data.isCheckoutVisible" class="container mx-auto py-10">
           <h2 class="text-center text-2xl font-bold mb-6">Checkout</h2>
 
-          <form class="max-w-lg mx-auto bg-white p-6 rounded shadow-md">
+          <form
+              class="max-w-lg mx-auto bg-white p-6 rounded shadow-md"
+              @submit.prevent="saveOrder"
+          >
             <div class="mb-4">
               <label for="name" class="block text-sm font-bold mb-2">Name</label>
               <input
